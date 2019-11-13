@@ -12,6 +12,10 @@ const staticDir = require('koa-static')
 const bodyParser = require('koa-bodyparser')
 const koaBody = require('koa-body')({multipart: true, uploadDir: '.'})
 const session = require('koa-session')
+const sqlite = require('sqlite-async')
+const bcrypt = require('bcrypt-promise')
+const fs = require('fs-extra')
+const mime = require('mime-types')
 //const jimp = require('jimp')
 
 /* IMPORT CUSTOM MODULES */
@@ -30,9 +34,6 @@ const defaultPort = 8080
 const file = new File()
 const port = process.env.PORT || defaultPort 
 const dbName = 'website.db'	
-
-
-
 
 app.use(views (`${__dirname}/views`, {extension: 'html'}, {map: {handlebars:'handlebars' }}))
 app.use(bodyParser({
@@ -87,7 +88,10 @@ router.get('/register', async ctx => await ctx.render('register'))
  *
  * @name Register Script
  * @route {POST} /register
+ * 
  */
+
+
 router.post('/register', koaBody, async ctx => {
 	try {
 		// extract the data from the request
@@ -96,7 +100,17 @@ router.post('/register', koaBody, async ctx => {
 		// call the functions in the module
 		const user = await new User(dbName)
 		await user.register(body.user, body.pass)
-		// await user.uploadPicture(path, type)
+		
+		//save image
+		const {path, type} = ctx.request.files.avatar
+		const fileExtension = mime.extension(type)
+		console.log(`path: ${path}`)
+		console.log(`type: ${type}`)
+		console.log(`fileExtension: ${fileExtension}`)
+		
+		await fs.copy(path, `public/avatars/${body.user}.${fileExtension}`)
+
+
 		// redirect to the home page
 		ctx.redirect(`/?msg=new user "${body.name}" added`)
 	} catch(err) {
