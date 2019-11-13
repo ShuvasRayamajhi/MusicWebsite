@@ -1,12 +1,43 @@
 
-body {
-    font-family: Arial, Helvetica, sans-serif;
-  }
-  
+
   .msg {
-    border: 1px solid red;
+
+    font-size: 15px;
     font-weight: bold;
     color: red;
-    padding: 1em;
+    
   }
+ 
+  body {
+	font: 25px/27px "Lucida Grande", Tahoma, Verdana, sans-serif;
+	color: #404040;
+	background: #55a5e6b0;
+  }
+  
+  input { 
+    width: 300px; 
+
+    background: rgba(0,0,0,0.3);
+    border: none;
+    outline: none;
+    padding: 10px;
+    font-size: 23px;
+    color: #fff;
+	}
+  .form {
+	position: relative;
+	margin: 40px auto;
+	padding: 80px 80px 80px;
+	width: 400px;
+	background: rgba(211, 246, 255, 0.781);
+	border-radius: 3px;
+	-webkit-box-shadow: 0 0 200px rgba(255, 255, 255, 0.5), 0 1px 2px rgba(0, 0, 0, 0.3);
+	box-shadow: 0 0 200px rgba(255, 255, 255, 0.5), 0 1px 2px rgba(0, 0, 0, 0.3);
+  }
+  h1 {
+	font: 20px/23px "Lucida Grande", Tahoma, Verdana, sans-serif;
+	color: #404040;
+	
+  }
+  
   

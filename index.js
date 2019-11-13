@@ -16,12 +16,9 @@ const session = require('koa-session')
 
 /* IMPORT CUSTOM MODULES */
 const User = require('./modules/user')
+const File = require('./modules/file')
 
-
-
-const app = new Koa()
-const router = new Router()
-
+const app = new Koa ()
 /* CONFIGURING THE MIDDLEWARE */
 app.keys = ['darkSecret']
 app.use(staticDir('public'))
@@ -30,9 +27,20 @@ app.use(session(app))
 app.use(views(`${__dirname}/views`, { extension: 'handlebars' }, {map: { handlebars: 'handlebars' }}))
 
 const defaultPort = 8080
+const file = new File()
 const port = process.env.PORT || defaultPort 
 const dbName = 'website.db'	
 
+
+
+
+app.use(views (`${__dirname}/views`, {extension: 'html'}, {map: {handlebars:'handlebars' }}))
+app.use(bodyParser({
+	encoding: 'multipart/form-data'
+}))
+
+const router = new Router()
+	
 /**
  * The secure home page.
  *
@@ -40,6 +48,21 @@ const dbName = 'website.db'
  * @route {GET} /
  * @authentication This route requires cookie-based authentication.
  */
+router.get('/file', async ctx => {
+    await ctx.render('pictures')
+})
+
+router.post('/', ctx => {
+    try {
+        console.log('processing the post request')
+        const body = ctx.request.body
+        console.log(body.fileUpload)
+    } catch(err) {
+        ctx.status = status.UNPROCESSABLE_ENTITY
+		ctx.body = err.message
+    }
+})
+
 router.get('/', async ctx => {
 	try {
 		if(ctx.session.authorised !== true) return ctx.redirect('/login?msg=you need to log in')
@@ -104,6 +127,8 @@ router.get('/logout', async ctx => {
 	ctx.session.authorised = null
 	ctx.redirect('/?msg=you are now logged out')
 })
+
+
 
 app.use(router.routes())
 module.exports = app.listen(port, async() => console.log(`listening on port ${port}`))

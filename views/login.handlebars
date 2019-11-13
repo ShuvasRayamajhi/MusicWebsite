@@ -5,20 +5,24 @@
 	<head>
 		<meta charset="utf-8">
 		<title>Log In</title>
-		<meta name="description" content="form to add new books">
-		<meta name="author" content="Mark Tyers">
+		<meta name="description" content="form to log in">
+		<meta name="author" content="rayamajs">
+		<link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet">
 		<link href="style.css" type="text/css" rel="stylesheet" />
 	</head>
 	<body>
-		<h1>Log In</h1>
+		<div class="form">
+		 <p class="sign" align="center">Log in</p>
 		{{#if msg}}
  			<p class="msg">{{msg}}</p>
 		{{/if}}
+	 	
 		<form action="/login" method="post">
-			<p>Username:<br /><input type="text" name="user" placeholder="your username" value="{{user}}" autofocus></p>
-			<p>Password:<br /><input type="password" name="pass" placeholder="your password" value=""></p>
+			<p>Username:<br /><input type="text" name="user" placeholder="Username" value="{{user}}" autofocus></p>
+			<p>Password:<br /><input type="password" name="pass" placeholder="Password" value=""></p>
 			<p><input type="submit" value="Log in"></p>
 		</form>
 		<p><a href="/register">register</a></p>
+		</div>
 	</body>
 </html>
