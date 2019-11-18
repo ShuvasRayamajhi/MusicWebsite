@@ -12,17 +12,17 @@ const staticDir = require('koa-static')
 const bodyParser = require('koa-bodyparser')
 const koaBody = require('koa-body')({multipart: true, uploadDir: '.'})
 const session = require('koa-session')
-const sqlite = require('sqlite-async')
-const bcrypt = require('bcrypt-promise')
+const Lame = require('node-lame').Lame
 const fs = require('fs-extra')
 const mime = require('mime-types')
+const bitrate = require('bitrate')
+
 //const jimp = require('jimp')
 
 /* IMPORT CUSTOM MODULES */
 const User = require('./modules/user')
-const File = require('./modules/file')
 
-const app = new Koa ()
+const app = new Koa()
 /* CONFIGURING THE MIDDLEWARE */
 app.keys = ['darkSecret']
 app.use(staticDir('public'))
@@ -31,17 +31,16 @@ app.use(session(app))
 app.use(views(`${__dirname}/views`, { extension: 'handlebars' }, {map: { handlebars: 'handlebars' }}))
 
 const defaultPort = 8080
-const file = new File()
-const port = process.env.PORT || defaultPort 
-const dbName = 'website.db'	
 
-app.use(views (`${__dirname}/views`, {extension: 'html'}, {map: {handlebars:'handlebars' }}))
+const port = process.env.PORT || defaultPort
+const dbName = 'website.db'
+
+app.use(views(`${__dirname}/views`, {extension: 'html'}, {map: {handlebars:'handlebars' }}))
 app.use(bodyParser({
 	encoding: 'multipart/form-data'
 }))
 
 const router = new Router()
-	
 /**
  * The secure home page.
  *
@@ -49,20 +48,6 @@ const router = new Router()
  * @route {GET} /
  * @authentication This route requires cookie-based authentication.
  */
-router.get('/file', async ctx => {
-    await ctx.render('pictures')
-})
-
-router.post('/', ctx => {
-    try {
-        console.log('processing the post request')
-        const body = ctx.request.body
-        console.log(body.fileUpload)
-    } catch(err) {
-        ctx.status = status.UNPROCESSABLE_ENTITY
-		ctx.body = err.message
-    }
-})
 
 router.get('/', async ctx => {
 	try {
@@ -90,8 +75,6 @@ router.get('/register', async ctx => await ctx.render('register'))
  * @route {POST} /register
  * 
  */
-
-
 router.post('/register', koaBody, async ctx => {
 	try {
 		// extract the data from the request
@@ -100,22 +83,38 @@ router.post('/register', koaBody, async ctx => {
 		// call the functions in the module
 		const user = await new User(dbName)
 		await user.register(body.user, body.pass)
-		
 		//save image
 		const {path, type} = ctx.request.files.avatar
 		const fileExtension = mime.extension(type)
-		console.log(`path: ${path}`)
-		console.log(`type: ${type}`)
-		console.log(`fileExtension: ${fileExtension}`)
-		
-		await fs.copy(path, `public/avatars/${body.user}.${fileExtension}`)
-
-
+		await user.uploadPicture(path, type, body.user, fileExtension)
 		// redirect to the home page
 		ctx.redirect(`/?msg=new user "${body.name}" added`)
 	} catch(err) {
 		await ctx.render('error', {message: err.message})
 	}
+})
+
+router.post('/upload', koaBody, async ctx => {
+	try {
+		// extract the data from the request
+		const body = ctx.request.body
+		console.log(body)
+		// call the functions in the module
+		const user = await new User(dbName)
+		//save song
+		const {path, type} = ctx.request.files.song
+		const fileExtension = mime.extension(type)
+		await user.uploadSong(path, type, body.title, fileExtension, body.username)
+		// redirect to the home page
+		console.log('uploaded')
+		ctx.redirect(`/?msg=new song "${body.title}" uploaded`)
+	} catch(err) {
+		await ctx.render('error', {message: err.message})
+	}
+})
+
+router.post('/play', koaBody, async ctx => {
+	
 })
 
 router.get('/login', async ctx => {
@@ -124,6 +123,7 @@ router.get('/login', async ctx => {
 	if(ctx.query.user) data.user = ctx.query.user
 	await ctx.render('login', data)
 })
+
 
 router.post('/login', async ctx => {
 	try {
@@ -141,8 +141,6 @@ router.get('/logout', async ctx => {
 	ctx.session.authorised = null
 	ctx.redirect('/?msg=you are now logged out')
 })
-
-
 
 app.use(router.routes())
 module.exports = app.listen(port, async() => console.log(`listening on port ${port}`))

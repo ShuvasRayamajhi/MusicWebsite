@@ -2,42 +2,44 @@
 
   .msg {
 
-    font-size: 15px;
+    font-size: 20px;
     font-weight: bold;
     color: red;
     
   }
- 
+
+  html {
+	background-color: #56baed;
+  }
+
   body {
-	font: 25px/27px "Lucida Grande", Tahoma, Verdana, sans-serif;
-	color: #404040;
-	background: #55a5e6b0;
+	font-family: "Poppins", sans-serif;
+	font-size: 25px;
+	height: 100vh;
   }
   
   input { 
-    width: 300px; 
-
-    background: rgba(0,0,0,0.3);
-    border: none;
-    outline: none;
-    padding: 10px;
-    font-size: 23px;
-    color: #fff;
+    display: block;
+    margin: auto;
+    width: 100%;
+	border: none;
+	font-size: large;
+    
+    padding-bottom: 1.25em;
+    color: #000000;
 	}
+
+  
   .form {
-	position: relative;
-	margin: 40px auto;
-	padding: 80px 80px 80px;
-	width: 400px;
-	background: rgba(211, 246, 255, 0.781);
-	border-radius: 3px;
-	-webkit-box-shadow: 0 0 200px rgba(255, 255, 255, 0.5), 0 1px 2px rgba(0, 0, 0, 0.3);
-	box-shadow: 0 0 200px rgba(255, 255, 255, 0.5), 0 1px 2px rgba(0, 0, 0, 0.3);
-  }
-  h1 {
-	font: 20px/23px "Lucida Grande", Tahoma, Verdana, sans-serif;
-	color: #404040;
+	max-width: 380px;
+	padding: 15px 35px 45px;
+	margin: 0 auto;
+	background-color: #fff;
 	
   }
   
+  
+
+
+
   

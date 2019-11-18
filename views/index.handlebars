@@ -4,45 +4,26 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8">
-		<title>Home Page</title>
-		<meta name="description" content="form to add new user">
+		<title>Upload a song.</title>
+		<meta name="description" content="Upload songs.">
 		<meta name="author" content="rayamajs">
-		
 		<link href="style.css" type="text/css" rel="stylesheet" />
-		
 	</head>
 	<body>
 		<div class="form">
-		<audio src="" controls id="audioPlayer">
-			sorry your browser does not support html5
-		</audio>
-		<ul id ="playlist">
-			<li class="current-song"><a href="reborn.mp3">Reborn<a/></li>
-			<li><a href="hood-politics.mp3">Hood Politics</a></li>
-			<li><a href="if-you-know.mp3">If You Know You Know</a></li>
-		</ul>
-		
-		<script>
-			audioPlayer()
-			function audioPlayer() {
-				var currentSong = 0
-				$("#audioPlayer")[0].src = $("#playlist li a")[0]
-           		$("#audioPlayer")[0].play()
-				$("#playlist li a").click(function(e){
-					e.preventDefault()
-					$("#audioPlayer")[0].src = this
-					$("#audioPlayer")[0].play()
-					$("#playlist li").removeClass("current-song")
-						currentSong = $(this).parent().index()
-						$(this).parent().addClass("current-song")
-
-
-				})
-			}
-		</script>
+		<form action="/upload" enctype="multipart/form-data" method="post">
+			<p>Upload Song<br /><input type="file" name="song"></p>
+			<p>Song Title:<br /><input type="text" name="title" placeholder="Enter Title" value="" autofocus></p>
+			
+			<p><input type="submit" value="upload"></p>
+		</form>
+		<form action="/play" enctype="multipart/form-data" method="post">
+			<p>Song Title:<br /><input type="text" name="title" placeholder="Enter Song name to play" value="" autofocus></p>
+			<p><input type="submit" value="play"></p>
+		</form>
 		<p><a href="/logout">log out</a></p>
-		<p><a href="/file">upload file</a></p>
 		</div>
-		
-</body>
+	</body>
 </html>
+
+

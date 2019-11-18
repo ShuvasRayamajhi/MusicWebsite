@@ -1,7 +1,11 @@
 
 'use strict'
-
+const mock = require('mock-fs')
 const Accounts = require('../modules/user.js')
+const File = require ('../modules/user.js')
+const fs = require ('fs')
+
+
 
 describe('register()', () => {
 
@@ -39,11 +43,12 @@ describe('register()', () => {
 	})
 
 })
-
+//test upload
 describe('uploadPicture()', () => {
 	// this would have to be done by mocking the file system
 	// perhaps using mock-fs?
 })
+
 
 describe('login()', () => {
 	test('log in with valid credentials', async done => {
@@ -72,5 +77,6 @@ describe('login()', () => {
 			.rejects.toEqual( Error('invalid password for account "doej"') )
 		done()
 	})
+
 
 })
