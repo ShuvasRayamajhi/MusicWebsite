@@ -1,37 +1,28 @@
 
-<!doctype html>
+<!DOCTYPE html>
+<html>
+<head>
+	<title>My Favourite Songs</title>
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8">
-		<title>Upload a song.</title>
-		<meta name="description" content="Upload songs.">
-		<meta name="author" content="rayamajs">
-		<link href="style.css" type="text/css" rel="stylesheet" />
-	</head>
-	<body>
-		<div class="form">
-		<form action="/uploadSong" enctype="multipart/form-data" method="post">
-			<p>Upload Song<br /><input type="file" id="songUpload" name="song"></p>
-			<p>Song Title:<br /><input type="text" name="title" placeholder="Enter Title" value="" autofocus></p>
-			<p><input type="submit" value="upload"></p>
-		</form>
-
-		{{!-- <form action="/uploadPicture" enctype="multipart/form-data" method="post">
-
-			<p>Song Picture:<br /><input type="file" name="pic"></p>
-			<p><input type="submit" value="Create"></p>
-		</form> --}}
 	
+	<link href="style.css" type="text/css" rel="stylesheet" />
+</head>
+<body>
+	
+	<table style="width: 100%;">
+	
+		<ol>
+		{{#each songs}}
+		<li></liclass><a href={{this.location}}>{{this.title}}</a></li>
+		<input type="submit" value="Play">
 
-	    <h1>{{this.title}}</h1>
-
-	    
-
+		<p><a href="/meta">meta</a></p>
+		{{/each}}
+		</ol>
 		
-		<p><a href="/logout">log out</a></p>
-		</div>
-	</body>
+	</table>
+	
+	
+	<p><a href="/upload">upload</a></p>
+</body>
 </html>
-
-

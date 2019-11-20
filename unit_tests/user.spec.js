@@ -41,12 +41,6 @@ describe('register()', () => {
 	})
 
 })
-//test upload
-describe('uploadPicture()', () => {
-	// this would have to be done by mocking the file system
-	// perhaps using mock-fs?
-})
-
 
 describe('login()', () => {
 	test('log in with valid credentials', async done => {
