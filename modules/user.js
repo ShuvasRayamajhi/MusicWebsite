@@ -35,30 +35,7 @@ module.exports = class User {
 			throw err
 		}
 	}
-	async uploadPicture(path, mimeType, username, fileExtension) {
-		const extension = mime.extension(mimeType)
-		console.log(`user: ${username}`)
-		console.log(`extension: ${extension}`)
-		await fs.copy(path, `public/avatars/${username}.${fileExtension}`)
-		const location = `public/avatars/${username}.${fileExtension}`
-		const sql = `UPDATE users SET image=(" ${location} ") WHERE user= ("${username}")`
-		console.log(location)
-		await this.db.run(sql)
-		return true
-	}
 
-	async uploadSong(path, mimeType, title, fileExtension, username) {
-		const extension = mime.extension(mimeType)
-		console.log(`user: ${username}`)
-		console.log(`song title: ${title}`)
-		console.log(`extension: ${extension}`)
-		await fs.copy(path, `public/songs/${title}.${fileExtension}`)
-		//const location2 = `public/songs/${title}`
-		//const sql = `INSERT INTO users (song) VALUES("${location2}") WHERE user= ("${username}")`
-		//console.log(location2)
-		//await this.db.run(sql)
-    	//return true
-	}
 	async login(username, password) {
 		try {
 			let sql = `SELECT count(id) AS count FROM users WHERE user="${username}";`

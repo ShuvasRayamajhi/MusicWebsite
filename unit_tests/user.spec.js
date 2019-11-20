@@ -5,8 +5,6 @@ const Accounts = require('../modules/user.js')
 const File = require ('../modules/user.js')
 const fs = require ('fs')
 
-
-
 describe('register()', () => {
 
 	test('register a valid account', async done => {
@@ -77,6 +75,4 @@ describe('login()', () => {
 			.rejects.toEqual( Error('invalid password for account "doej"') )
 		done()
 	})
-
-
 })

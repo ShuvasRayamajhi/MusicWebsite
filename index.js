@@ -21,6 +21,7 @@ const bitrate = require('bitrate')
 
 /* IMPORT CUSTOM MODULES */
 const User = require('./modules/user')
+const Song = require('./modules/song')
 
 const app = new Koa()
 /* CONFIGURING THE MIDDLEWARE */
@@ -35,7 +36,7 @@ const defaultPort = 8080
 const port = process.env.PORT || defaultPort
 const dbName = 'website.db'
 
-app.use(views(`${__dirname}/views`, {extension: 'html'}, {map: {handlebars:'handlebars' }}))
+app.use(views(`${__dirname}/views`, {extension: 'html'}, {map: {handlebars: 'handlebars' }}))
 app.use(bodyParser({
 	encoding: 'multipart/form-data'
 }))
@@ -83,39 +84,53 @@ router.post('/register', koaBody, async ctx => {
 		// call the functions in the module
 		const user = await new User(dbName)
 		await user.register(body.user, body.pass)
-		//save image
-		const {path, type} = ctx.request.files.avatar
-		const fileExtension = mime.extension(type)
-		await user.uploadPicture(path, type, body.user, fileExtension)
-		// redirect to the home page
 		ctx.redirect(`/?msg=new user "${body.name}" added`)
 	} catch(err) {
 		await ctx.render('error', {message: err.message})
 	}
 })
 
-router.post('/upload', koaBody, async ctx => {
+/* router.post('/uploadPicture', koaBody, async ctx => {
 	try {
 		// extract the data from the request
 		const body = ctx.request.body
 		console.log(body)
 		// call the functions in the module
-		const user = await new User(dbName)
+		const song = await new Song(dbName)
+		//save image
+		const {path, type} = ctx.request.files.pic
+		const fileExtension = mime.extension(type)
+		await song.uploadPicture(path, type, body.title, fileExtension)
+		// redirect to the home page
+		ctx.redirect(`/?msg=new user "${body.name}" added`)
+	} catch(err) {
+		await ctx.render('error', {message: err.message})
+	}
+}) */
+
+router.post('/uploadSong', koaBody, async ctx => {
+	try {
+		// extract the data from the request
+		const body = ctx.request.body
+		console.log(body)
+		// call the functions in the module
+		const song = await new Song(dbName)
 		//save song
 		const {path, type} = ctx.request.files.song
 		const fileExtension = mime.extension(type)
-		await user.uploadSong(path, type, body.title, fileExtension, body.username)
+		await song.uploadSong(path, type, body.title, fileExtension)
 		// redirect to the home page
 		console.log('uploaded')
 		ctx.redirect(`/?msg=new song "${body.title}" uploaded`)
+		const title = body.title
+		await ctx.render('index', {index: title})
 	} catch(err) {
 		await ctx.render('error', {message: err.message})
 	}
 })
 
-router.post('/play', koaBody, async ctx => {
-	
-})
+
+
 
 router.get('/login', async ctx => {
 	const data = {}

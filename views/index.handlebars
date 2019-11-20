@@ -11,16 +11,24 @@
 	</head>
 	<body>
 		<div class="form">
-		<form action="/upload" enctype="multipart/form-data" method="post">
-			<p>Upload Song<br /><input type="file" name="song"></p>
+		<form action="/uploadSong" enctype="multipart/form-data" method="post">
+			<p>Upload Song<br /><input type="file" id="songUpload" name="song"></p>
 			<p>Song Title:<br /><input type="text" name="title" placeholder="Enter Title" value="" autofocus></p>
-			
 			<p><input type="submit" value="upload"></p>
 		</form>
-		<form action="/play" enctype="multipart/form-data" method="post">
-			<p>Song Title:<br /><input type="text" name="title" placeholder="Enter Song name to play" value="" autofocus></p>
-			<p><input type="submit" value="play"></p>
-		</form>
+
+		{{!-- <form action="/uploadPicture" enctype="multipart/form-data" method="post">
+
+			<p>Song Picture:<br /><input type="file" name="pic"></p>
+			<p><input type="submit" value="Create"></p>
+		</form> --}}
+	
+
+	    <h1>{{this.title}}</h1>
+
+	    
+
+		
 		<p><a href="/logout">log out</a></p>
 		</div>
 	</body>
