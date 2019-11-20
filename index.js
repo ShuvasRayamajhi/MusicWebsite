@@ -16,18 +16,15 @@ const bcrypt = require('bcrypt-promise')
 // const fs = require('fs-extra')
 const mime = require('mime-types')
 const fs = require('fs-extra')
+const lame = require('node-lame')
 const sqlite = require('sqlite-async')
 const saltRounds = 10
-const Lame = require('node-lame').Lame
 const bitrate = require('bitrate')
 const NodeID3 = require('node-id3')
 const mm = require('musicmetadata')
 
 // create a new parser from a node ReadStream
-var parser = mm(fs.createReadStream('public/songs/Momma.mp3'), function (err, metadata) {
-	if (err) throw err
-	console.log(metadata)
-  })
+
 //const jimp = require('jimp')
 
 /* IMPORT CUSTOM MODULES */
@@ -63,7 +60,7 @@ const router = new Router()
 
 router.get('/', async ctx => {
 	try {
-		//console.log('/index')
+		console.log('/index')
 		const sql = 'SELECT song_id, title, location FROM songs;'
 		const db = await sqlite.open(dbName)
 		const data = await db.all(sql)
@@ -74,6 +71,10 @@ router.get('/', async ctx => {
 		ctx.body = err.message
 	}
 })
+// const parser = mm(fs.createReadStream('public/songs/Momma.mp3'), function (err, metadata) {
+// 	if (err) throw err
+// 	console.log(metadata)
+//   })
 
 router.get('/post/:id', async ctx => {
 	try {
@@ -88,6 +89,19 @@ router.get('/post/:id', async ctx => {
 		ctx.body = err.message
 	}
 })
+
+router.get('/meta', async ctx => {
+	try {
+		await ctx.render('meta', {
+			name: 'shuvas',
+			city: 'coventry',
+			things: 'nothing'
+		})
+	} catch(err) {
+		ctx.body = err.message
+	}
+})
+router.post('/play')
 
 /**
  * The user registration page.
