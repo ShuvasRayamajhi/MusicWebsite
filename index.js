@@ -12,11 +12,22 @@ const staticDir = require('koa-static')
 const bodyParser = require('koa-bodyparser')
 const koaBody = require('koa-body')({multipart: true, uploadDir: '.'})
 const session = require('koa-session')
-const Lame = require('node-lame').Lame
-const fs = require('fs-extra')
+const bcrypt = require('bcrypt-promise')
+// const fs = require('fs-extra')
 const mime = require('mime-types')
+const fs = require('fs-extra')
+const sqlite = require('sqlite-async')
+const saltRounds = 10
+const Lame = require('node-lame').Lame
 const bitrate = require('bitrate')
+const NodeID3 = require('node-id3')
+const mm = require('musicmetadata')
 
+// create a new parser from a node ReadStream
+var parser = mm(fs.createReadStream('public/songs/Momma.mp3'), function (err, metadata) {
+	if (err) throw err
+	console.log(metadata)
+  })
 //const jimp = require('jimp')
 
 /* IMPORT CUSTOM MODULES */
@@ -52,12 +63,29 @@ const router = new Router()
 
 router.get('/', async ctx => {
 	try {
-		if(ctx.session.authorised !== true) return ctx.redirect('/login?msg=you need to log in')
-		const data = {}
-		if(ctx.query.msg) data.msg = ctx.query.msg
-		await ctx.render('index')
+		//console.log('/index')
+		const sql = 'SELECT song_id, title, location FROM songs;'
+		const db = await sqlite.open(dbName)
+		const data = await db.all(sql)
+		await db.close()
+		//console.log(data)
+		await ctx.render('index', {title: 'Favourite songs', songs: data})
 	} catch(err) {
-		await ctx.render('error', {message: err.message})
+		ctx.body = err.message
+	}
+})
+
+router.get('/post/:id', async ctx => {
+	try {
+		console.log(ctx.params.id)
+		const sql = `SELECT * FROM songs WHERE id = ${ctx.params.id};`
+		const db = await sqlite.open(dbName)
+		const data = await db.get(sql)
+		await db.close()
+		console.log(data)
+		await ctx.render('play', data)
+	} catch(err) {
+		ctx.body = err.message
 	}
 })
 
@@ -68,6 +96,7 @@ router.get('/', async ctx => {
  * @route {GET} /register
  */
 router.get('/register', async ctx => await ctx.render('register'))
+router.get('/upload', async ctx => await ctx.render('upload'))
 
 /**
  * The script to process new user registrations.
@@ -80,7 +109,7 @@ router.post('/register', koaBody, async ctx => {
 	try {
 		// extract the data from the request
 		const body = ctx.request.body
-		console.log(body)
+		//console.log(body)
 		// call the functions in the module
 		const user = await new User(dbName)
 		await user.register(body.user, body.pass)
@@ -112,7 +141,7 @@ router.post('/uploadSong', koaBody, async ctx => {
 	try {
 		// extract the data from the request
 		const body = ctx.request.body
-		console.log(body)
+		//console.log(body)
 		// call the functions in the module
 		const song = await new Song(dbName)
 		//save song
@@ -128,8 +157,6 @@ router.post('/uploadSong', koaBody, async ctx => {
 		await ctx.render('error', {message: err.message})
 	}
 })
-
-
 
 
 router.get('/login', async ctx => {
@@ -156,6 +183,8 @@ router.get('/logout', async ctx => {
 	ctx.session.authorised = null
 	ctx.redirect('/?msg=you are now logged out')
 })
+
+
 
 app.use(router.routes())
 module.exports = app.listen(port, async() => console.log(`listening on port ${port}`))
