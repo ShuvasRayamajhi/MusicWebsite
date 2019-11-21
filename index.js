@@ -60,48 +60,52 @@ const router = new Router()
 
 router.get('/', async ctx => {
 	try {
-		console.log('/index')
+		//console.log('/index')
 		const sql = 'SELECT song_id, title, location FROM songs;'
 		const db = await sqlite.open(dbName)
 		const data = await db.all(sql)
 		await db.close()
-		//console.log(data)
+		console.log(data)
 		await ctx.render('index', {title: 'Favourite songs', songs: data})
 	} catch(err) {
 		ctx.body = err.message
 	}
 })
-// const parser = mm(fs.createReadStream('public/songs/Momma.mp3'), function (err, metadata) {
-// 	if (err) throw err
-// 	console.log(metadata)
-//   })
 
-router.get('/post/:id', async ctx => {
+
+// const parser = mm(fs.createReadStream('public/songs/Hood_Politics.mp3'), function (err, metadata) {
+//  	if (err) throw err
+// 	console.log(metadata)
+//    })
+
+router.get('/play/:song_id', async ctx => {
 	try {
-		console.log(ctx.params.id)
-		const sql = `SELECT * FROM songs WHERE id = ${ctx.params.id};`
+		const sql = `SELECT location FROM songs WHERE song_id = ${ctx.params.song_id} LIMIT 1;`
 		const db = await sqlite.open(dbName)
 		const data = await db.get(sql)
 		await db.close()
-		console.log(data)
-		await ctx.render('play', data)
+		const newdata = JSON.parse(JSON.stringify(data))
+		console.log(newdata)
+		ctx.response.type = 'mp3'
+		ctx.response.body = fs.createReadStream(newdata.location)
 	} catch(err) {
 		ctx.body = err.message
 	}
 })
 
+
 router.get('/meta', async ctx => {
-	try {
-		await ctx.render('meta', {
-			name: 'shuvas',
-			city: 'coventry',
-			things: 'nothing'
-		})
-	} catch(err) {
-		ctx.body = err.message
-	}
+
 })
-router.post('/play')
+
+
+router.get('/play', async ctx => {
+	//console.log('/index')
+	const location = 'public/songs/xxx.mp3'
+	ctx.response.type = 'mp3'
+	ctx.response.body = fs.createReadStream(location)
+	console.log(location)
+})
 
 /**
  * The user registration page.
@@ -160,8 +164,7 @@ router.post('/uploadSong', koaBody, async ctx => {
 		const song = await new Song(dbName)
 		//save song
 		const {path, type} = ctx.request.files.song
-		const fileExtension = mime.extension(type)
-		await song.uploadSong(path, type, body.title, fileExtension)
+		await song.uploadSong(path, type, body.title)
 		// redirect to the home page
 		console.log('uploaded')
 		ctx.redirect(`/?msg=new song "${body.title}" uploaded`)
@@ -198,7 +201,7 @@ router.get('/logout', async ctx => {
 	ctx.redirect('/?msg=you are now logged out')
 })
 
-
-
-app.use(router.routes())
+app
+	.use(router.routes())
+	.use(router.allowedMethods())
 module.exports = app.listen(port, async() => console.log(`listening on port ${port}`))

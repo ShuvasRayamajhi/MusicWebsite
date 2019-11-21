@@ -32,18 +32,15 @@ module.exports = class Song {
 	} */
 //song
 
-	async uploadSong(path, mimeType, title, fileExtension) {
+	async uploadSong(path, mimeType, title,) {
 		try {
 			if(title.length === 0) throw new Error('missing title')
-			const extension = mime.extension(mimeType)
-			if (extension === 'bin') throw new Error('missing file2')
-			if (extension !== 'mp3') throw new Error('Only mp3 files allowed')
+			//if (extension !== 'mp3') throw new Error('Only mp3 files allowed')
 			console.log(`song title: ${title}`)
-			console.log(`extension: ${extension}`)
-			await fs.copy(path, `public/songs/${title}.${fileExtension}`)
-			const location2 = `public/songs/${title}.${fileExtension}`
-			const sql = `INSERT INTO songs(title, location) VALUES("${title}", "${location2}")`
-			console.log(location2)
+			await fs.copy(path, `public/songs/${title}.mp3`)
+			const location = `public/songs/${title}.mp3`
+			const sql = `INSERT INTO songs(title, location) VALUES("${title}", "${location}")`
+			console.log(location)
 			await this.db.run(sql)
 			await this.db.close()
 			return true
