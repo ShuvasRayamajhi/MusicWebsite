@@ -20,7 +20,7 @@ const lame = require('node-lame')
 const sqlite = require('sqlite-async')
 const saltRounds = 10
 const bitrate = require('bitrate')
-const NodeID3 = require('node-id3')
+const nodeID3 = require('node-id3')
 const mm = require('musicmetadata')
 
 // create a new parser from a node ReadStream
@@ -57,54 +57,79 @@ const router = new Router()
  * @route {GET} /
  * @authentication This route requires cookie-based authentication.
  */
+// router.get('/', async ctx => {
+// 	try {
+// 		if(ctx.session.authorised !== true) return ctx.redirect('/login?msg=you need to log in')
+// 		const data = {}
+// 		if(ctx.query.msg) data.msg = ctx.query.msg
+// 		await ctx.render('index')
+// 	} catch(err) {
+// 		await ctx.render('error', {message: err.message})
+// 	}
+// })
 
 router.get('/', async ctx => {
 	try {
+		if(ctx.session.authorised !== true) return ctx.redirect('/login?msg=you need to log in')
+		//const data = {}
+		//if(ctx.query.msg) data.msg = ctx.query.msg
 		//console.log('/index')
-		const sql = 'SELECT song_id, title, location FROM songs;'
+		const sql = 'SELECT * FROM songs;'
 		const db = await sqlite.open(dbName)
-		const data = await db.all(sql)
-		await db.close()
-		console.log(data)
-		await ctx.render('index', {title: 'Favourite songs', songs: data})
+		const data2 = await db.all(sql)
+		console.log(data2)
+		await ctx.render('index', {title: 'Favourite songs', songs: data2})
 	} catch(err) {
-		ctx.body = err.message
+		await ctx.render('error', { message: err.message })
 	}
 })
 
+//create a new parser from a node ReadStream
+// const parser = mm(fs.createReadStream('public/songs/yeah.mp3'), function (err, metadata) {
+//   if (err) throw err
+//   console.log(metadata)
+// })
 
-// const parser = mm(fs.createReadStream('public/songs/Hood_Politics.mp3'), function (err, metadata) {
-//  	if (err) throw err
-// 	console.log(metadata)
-//    })
 
 router.get('/play/:song_id', async ctx => {
 	try {
-		const sql = `SELECT location FROM songs WHERE song_id = ${ctx.params.song_id} LIMIT 1;`
+		const song = await new Song(dbName)
+		const id = ctx.params.song_id
+		const data = await song.playSong(id)
+		const newdata = JSON.parse(JSON.stringify(data))
+		console.log(newdata)
+		ctx.response.type = 'mp3'
+		ctx.response.body = fs.createReadStream(newdata.location)
+		console.log(newdata.location)
+		//const tags = {title: 'song', artist: 'artist', album: 'album',genre: 'genre'}
+		//console.log(tags)
+		// const read = nodeID3.read(newdata.location)
+		// JSON.parse(JSON.stringify(read))
+		// console.log(read.title, read.artist, read.album, read.genre)
+		//const idata = {title: read.title, artist: read.album}
+	} catch(err) {
+		fs.createReadStream.close
+		ctx.body = err.message
+	}
+})
+router.get('/meta', async ctx => {
+	try {
+		const sql = 'SELECT location FROM songs WHERE song_id =21;'
 		const db = await sqlite.open(dbName)
 		const data = await db.get(sql)
 		await db.close()
 		const newdata = JSON.parse(JSON.stringify(data))
 		console.log(newdata)
-		ctx.response.type = 'mp3'
-		ctx.response.body = fs.createReadStream(newdata.location)
+		const read = nodeID3.read(newdata.location)
+		JSON.parse(JSON.stringify(read))
+		console.log(read.title)
+		const title = read.title
+		const album = read.album
+		const artist = read.artist
+		await ctx.render('meta', {title, artist, album})
 	} catch(err) {
 		ctx.body = err.message
 	}
-})
-
-
-router.get('/meta', async ctx => {
-
-})
-
-
-router.get('/play', async ctx => {
-	//console.log('/index')
-	const location = 'public/songs/xxx.mp3'
-	ctx.response.type = 'mp3'
-	ctx.response.body = fs.createReadStream(location)
-	console.log(location)
 })
 
 /**
@@ -115,7 +140,7 @@ router.get('/play', async ctx => {
  */
 router.get('/register', async ctx => await ctx.render('register'))
 router.get('/upload', async ctx => await ctx.render('upload'))
-
+router.get('/meta', async ctx => await ctx.render('meta.html'))
 /**
  * The script to process new user registrations.
  *
@@ -136,25 +161,6 @@ router.post('/register', koaBody, async ctx => {
 		await ctx.render('error', {message: err.message})
 	}
 })
-
-/* router.post('/uploadPicture', koaBody, async ctx => {
-	try {
-		// extract the data from the request
-		const body = ctx.request.body
-		console.log(body)
-		// call the functions in the module
-		const song = await new Song(dbName)
-		//save image
-		const {path, type} = ctx.request.files.pic
-		const fileExtension = mime.extension(type)
-		await song.uploadPicture(path, type, body.title, fileExtension)
-		// redirect to the home page
-		ctx.redirect(`/?msg=new user "${body.name}" added`)
-	} catch(err) {
-		await ctx.render('error', {message: err.message})
-	}
-}) */
-
 router.post('/uploadSong', koaBody, async ctx => {
 	try {
 		// extract the data from the request
@@ -175,6 +181,26 @@ router.post('/uploadSong', koaBody, async ctx => {
 	}
 })
 
+router.post('/meta', koaBody, async ctx => {
+
+})
+/* router.post('/uploadPicture', koaBody, async ctx => {
+	try {
+		// extract the data from the request
+		const body = ctx.request.body
+		console.log(body)
+		// call the functions in the module
+		const song = await new Song(dbName)
+		//save image
+		const {path, type} = ctx.request.files.pic
+		const fileExtension = mime.extension(type)
+		await song.uploadPicture(path, type, body.title, fileExtension)
+		// redirect to the home page
+		ctx.redirect(`/?msg=new user "${body.name}" added`)
+	} catch(err) {
+		await ctx.render('error', {message: err.message})
+	}
+}) */
 
 router.get('/login', async ctx => {
 	const data = {}
@@ -196,12 +222,13 @@ router.post('/login', async ctx => {
 	}
 })
 
+
 router.get('/logout', async ctx => {
 	ctx.session.authorised = null
+	ctx.render('login')
 	ctx.redirect('/?msg=you are now logged out')
 })
 
 app
 	.use(router.routes())
-	.use(router.allowedMethods())
 module.exports = app.listen(port, async() => console.log(`listening on port ${port}`))
