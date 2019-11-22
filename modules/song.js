@@ -32,7 +32,7 @@ module.exports = class Song {
 	} */
 //song
 
-	async uploadSong(path, mimeType, title,) {
+	async uploadSong(path, mimeType, title) {
 		try {
 			if(title.length === 0) throw new Error('missing title')
 			//if (extension !== 'mp3') throw new Error('Only mp3 files allowed')
@@ -48,4 +48,23 @@ module.exports = class Song {
 			throw err
 		}
 	}
+	async playSong(id) {
+		try {
+			console.log(id)
+			const sql = `SELECT location FROM songs WHERE song_id = ${id} LIMIT 1;`
+			const data = await this.db.get(sql)
+			console.log(data)
+			console.log(data)
+			await this.db.run(sql)
+			await this.db.close()
+			return data
+		} catch(err) {
+			throw err
+		}
+	}
+	async metaData(metadata) {
+		console.log(metadata)
+		return metadata
+	}
+
 }

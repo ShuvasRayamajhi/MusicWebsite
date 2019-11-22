@@ -29,6 +29,7 @@
 		"bitrate": "^1.0.4",
 		"fs": "0.0.1-security",
 		"fs-extra": "^7.0.1",
+		"git-flow": "^0.2.0",
 		"handlebars": "^4.4.2",
 		"koa": "^2.6.2",
 		"koa-body": "^4.0.8",
