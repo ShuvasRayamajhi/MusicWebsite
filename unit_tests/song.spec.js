@@ -1,9 +1,9 @@
 'use strict'
 
 const mock = require('mock-fs')
-const File = require ('../modules/song.js')
+const Song = require ('../modules/song.js')
 const fs = require('fs')
-const file = new File()
+const File = require ('../modules/song.js')
 
 beforeAll( async() => {
 	mock({
@@ -24,7 +24,8 @@ describe('uploadSong()', () => {
 	test(`filename can't be empty string`, async done => {
 		expect.assertions(1)
 		try {
-			await file.uploadSong('', 'asd')
+			const song = await new Song()
+			await song.uploadSong('', 'asd')
 			done.fail('test failed')
 		} catch(err) {
 			expect(err.message).toBe(`filename can't be empty`)
@@ -35,7 +36,8 @@ describe('uploadSong()', () => {
 	test(`filename can't be undefined`, async done => {
 		expect.assertions(1)
 		try {
-			await file.uploadSong()
+			const song = await new Song()
+			await song.uploadSong()
 			done.fail('test failed')
 		} catch(err) {
 			expect(err.message).toBe(`filename can't be empty`)
@@ -46,7 +48,8 @@ describe('uploadSong()', () => {
 	test(`song can't be empty`, async done => {
 		expect.assertions(1)
 		try {
-			await file.uploadSong('foo.mp3')
+			const song = await new Song()
+			await song.uploadSong('foo.mp3')
 			done.fail('test failed')
 		} catch(err) {
 			expect(err.message).toBe(`song can't be empty`)
