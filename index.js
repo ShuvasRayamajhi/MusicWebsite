@@ -77,8 +77,7 @@ router.get('/', async ctx => {
 		const sql = 'SELECT * FROM songs;'
 		const db = await sqlite.open(dbName)
 		const data = await db.all(sql)
-		const newdata = JSON.parse(JSON.stringify(data))
-		await ctx.render('index', {title: 'Favourite songs', songs: newdata})
+		await ctx.render('index', {title: 'Favourite songs', songs: data})
 	} catch(err) {
 		await ctx.render('error', { message: err.message })
 	}
@@ -93,14 +92,15 @@ router.get('/', async ctx => {
 
 router.get('/play/:song_id', async ctx => {
 	try {
-		const song = await new Song(dbName)
 		const id = ctx.params.song_id
+		const song = await new Song(dbName)
 		const data = await song.playSong(id)
 		const newdata = JSON.parse(JSON.stringify(data))
 		//console.log(newdata)
-		console.log(`test ${newdata.location}`)
+		await ctx.render('index')
 		ctx.response.type = 'mp3'
 		ctx.response.body = fs.createReadStream(newdata.location)
+		
 		//console.log(newdata.location)
 		//const tags = {title: 'song', artist: 'artist', album: 'album',genre: 'genre'}
 		//console.log(tags)
@@ -113,25 +113,25 @@ router.get('/play/:song_id', async ctx => {
 		ctx.body = err.message
 	}
 })
-router.get('/meta', async ctx => {
-	try {
-		const sql = 'SELECT location FROM songs WHERE song_id =25;'
-		const db = await sqlite.open(dbName)
-		const data = await db.get(sql)
-		await db.close()
-		const newdata = JSON.parse(JSON.stringify(data))
-		console.log(newdata)
-		const read = nodeID3.read(newdata.location)
-		JSON.parse(JSON.stringify(read))
-		console.log(read.title)
-		const title = read.title
-		const album = read.album
-		const artist = read.artist
-		await ctx.render('meta', {title, artist, album})
-	} catch(err) {
-		ctx.body = err.message
-	}
-})
+// router.get('/meta', async ctx => {
+// 	try {
+// 		const sql = 'SELECT location FROM songs WHERE song_id =25;'
+// 		const db = await sqlite.open(dbName)
+// 		const data = await db.get(sql)
+// 		await db.close()
+// 		const newdata = JSON.parse(JSON.stringify(data))
+// 		console.log(newdata)
+// 		const read = nodeID3.read(newdata.location)
+// 		JSON.parse(JSON.stringify(read))
+// 		console.log(read.title)
+// 		const title = read.title
+// 		const album = read.album
+// 		const artist = read.artist
+// 		await ctx.render('index', {title, artist, album})
+// 	} catch(err) {
+// 		ctx.body = err.message
+// 	}
+// })
 
 /**
  * The user registration page.
@@ -141,7 +141,6 @@ router.get('/meta', async ctx => {
  */
 router.get('/register', async ctx => await ctx.render('register'))
 router.get('/upload', async ctx => await ctx.render('upload'))
-router.get('/meta', async ctx => await ctx.render('meta.html'))
 /**
  * The script to process new user registrations.
  *
@@ -170,13 +169,12 @@ router.post('/uploadSong', koaBody, async ctx => {
 		// call the functions in the module
 		const song = await new Song(dbName)
 		//save song
-		const {path, type} = ctx.request.files.song
-		await song.uploadSong(path, type, body.title)
+		const {path, type, filename} = ctx.request.files.song
+		await song.uploadSong(path, type, body.filename)
 		// redirect to the home page
 		console.log('uploaded')
-		ctx.redirect(`/?msg=new song "${body.title}" uploaded`)
-		const title = body.title
-		await ctx.render('index', {index: title})
+		ctx.redirect(`/?msg=new song uploaded`)
+		await ctx.render('index')
 	} catch(err) {
 		await ctx.render('error', {message: err.message})
 	}

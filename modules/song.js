@@ -5,6 +5,7 @@ const bcrypt = require('bcrypt-promise')
 const mime = require('mime-types')
 const fs = require('fs-extra')
 const sqlite = require('sqlite-async')
+const nodeID3 = require('node-id3')
 const saltRounds = 10
 
 module.exports = class Song {
@@ -13,7 +14,7 @@ module.exports = class Song {
 		return (async() => {
 			this.db = await sqlite.open(dbName)
 			// we need this table to store the user accounts
-			const sql = 'CREATE TABLE IF NOT EXISTS songs (song_id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, location TEXT);'
+			const sql = 'CREATE TABLE IF NOT EXISTS songs (song_id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, artist TEXT, album TEXT, genre TEXT, location TEXT);'
 			await this.db.run(sql)
 			return this
 		})()
@@ -32,14 +33,14 @@ module.exports = class Song {
 	} */
 //song
 
-	async uploadSong(path, mimeType, title) {
+	async uploadSong(path, type, filename ) {
 		try {
-			if(title.length === 0) throw new Error('missing title')
 			//if (extension !== 'mp3') throw new Error('Only mp3 files allowed')
-			console.log(`song title: ${title}`)
-			await fs.copy(path, `public/songs/${title}.mp3`)
-			const location = `public/songs/${title}.mp3`
-			const sql = `INSERT INTO songs(title, location) VALUES("${title}", "${location}")`
+			await fs.copy(path, `public/songs/${filename}.mp3`)
+			const location = `public/songs/${filename}.mp3`
+			const read = nodeID3.read(location)
+			JSON.parse(JSON.stringify(read))
+			const sql = `INSERT INTO songs(title, artist, album, genre, location) VALUES("${read.title}", "${read.artist}", "${read.album}", "${read.genre}", "${location}")`
 			console.log(location)
 			await this.db.run(sql)
 			await this.db.close()
