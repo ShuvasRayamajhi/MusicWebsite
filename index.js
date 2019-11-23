@@ -76,9 +76,9 @@ router.get('/', async ctx => {
 		//console.log('/index')
 		const sql = 'SELECT * FROM songs;'
 		const db = await sqlite.open(dbName)
-		const data2 = await db.all(sql)
-		console.log(data2)
-		await ctx.render('index', {title: 'Favourite songs', songs: data2})
+		const data = await db.all(sql)
+		const newdata = JSON.parse(JSON.stringify(data))
+		await ctx.render('index', {title: 'Favourite songs', songs: newdata})
 	} catch(err) {
 		await ctx.render('error', { message: err.message })
 	}
@@ -97,10 +97,11 @@ router.get('/play/:song_id', async ctx => {
 		const id = ctx.params.song_id
 		const data = await song.playSong(id)
 		const newdata = JSON.parse(JSON.stringify(data))
-		console.log(newdata)
+		//console.log(newdata)
+		console.log(`test ${newdata.location}`)
 		ctx.response.type = 'mp3'
 		ctx.response.body = fs.createReadStream(newdata.location)
-		console.log(newdata.location)
+		//console.log(newdata.location)
 		//const tags = {title: 'song', artist: 'artist', album: 'album',genre: 'genre'}
 		//console.log(tags)
 		// const read = nodeID3.read(newdata.location)
@@ -114,7 +115,7 @@ router.get('/play/:song_id', async ctx => {
 })
 router.get('/meta', async ctx => {
 	try {
-		const sql = 'SELECT location FROM songs WHERE song_id =21;'
+		const sql = 'SELECT location FROM songs WHERE song_id =25;'
 		const db = await sqlite.open(dbName)
 		const data = await db.get(sql)
 		await db.close()

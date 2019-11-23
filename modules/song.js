@@ -53,8 +53,6 @@ module.exports = class Song {
 			console.log(id)
 			const sql = `SELECT location FROM songs WHERE song_id = ${id} LIMIT 1;`
 			const data = await this.db.get(sql)
-			console.log(data)
-			console.log(data)
 			await this.db.run(sql)
 			await this.db.close()
 			return data
