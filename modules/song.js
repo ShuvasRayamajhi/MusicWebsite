@@ -34,6 +34,8 @@ module.exports = class Song {
 //song
 
 	async uploadSong(path, type, filename ) {
+		if (filename === undefined || filename === '') throw new error (`filename can't be empty`)
+		if (type === undefined || type !== 'mpeg') throw new errot (`file can only be mp3.`)
 		try {
 			//if (extension !== 'mp3') throw new Error('Only mp3 files allowed')
 			await fs.copy(path, `public/songs/${filename}.mp3`)
