@@ -21,5 +21,27 @@ module.exports = class Playlist {
             console.log(plname)
             await this.db.run(sql)
             return this
+		}
+		async uploadPicture(path, type, plname, fileExtension) {
+            const extension = mime.extension(type)
+            console.log(`song title: ${plname}`)
+            console.log(`extension: ${extension}`)
+            await fs.copy(path, `public/covers/${plname}.${fileExtension}`)
+            const location = `public/covers/${plname}.${fileExtension}`
+            const sql = `INSERT INTO ${plname} (name, pic) VALUES("${plname}", "${location}")`
+            console.log(location)
+            await this.db.run(sql)
+            return true
+    }
+        async plData() {
+        try {
+            const sql = 'SELECT * FROM playlist1;'
+            const data = await this.db.all(sql)
+            await this.db.run(sql)
+            await this.db.close()
+            return data
+        } catch(err) {
+            throw err
         }
+    }
 }
