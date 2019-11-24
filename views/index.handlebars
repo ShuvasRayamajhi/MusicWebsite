@@ -9,14 +9,7 @@
 	
 	<table style="width: 100%;">
 	<h1>songs</h1>
-				<form action="/" method="get">
-					<input type="text" name="q" value="{{query}}">
-					<input type="submit" value="Search">
-				</form>
-		<ol>
-		{{#if query}}
-    			<p>{{query}}</p>
-  		{{/if}}
+
 		{{#each songs}}
 			<li><a href="/play/{{this.song_id}}"> SONG NAME: {{this.title}} </a></li>
 			<li2><a > ARTIST: {{this.artist}} ALBUM: {{this.album}} GENRE: {{this.genre}}</a></li>

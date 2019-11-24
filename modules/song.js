@@ -19,25 +19,9 @@ module.exports = class Song {
 			return this
 		})()
 	}
-//picture
-/* 	async uploadPicture(path, mimeType, title, fileExtension) {
-		const extension = mime.extension(mimeType)
-		console.log(`song title: ${title}`)
-		console.log(`extension: ${extension}`)
-		await fs.copy(path, `public/covers/${title}.${fileExtension}`)
-		const location = `public/covers/${title}.${fileExtension}`
-		const sql = `INSERT INTO songs(cover) VALUES("${location}")`
-		console.log(location)
-		await this.db.run(sql)
-		return true
-	} */
-//song
 
 	async uploadSong(path, type, filename ) {
-		if (filename === undefined || filename === '') throw new error (`filename can't be empty`)
-		if (type === undefined || type !== 'mpeg') throw new errot (`file can only be mp3.`)
 		try {
-			//if (extension !== 'mp3') throw new Error('Only mp3 files allowed')
 			await fs.copy(path, `public/songs/${filename}.mp3`)
 			const location = `public/songs/${filename}.mp3`
 			const read = nodeID3.read(location)
