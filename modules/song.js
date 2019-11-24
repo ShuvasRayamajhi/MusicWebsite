@@ -37,7 +37,6 @@ module.exports = class Song {
 	}
 	async playSong(id) {
 		try {
-			console.log(id)
 			const sql = `SELECT location FROM songs WHERE song_id = ${id} LIMIT 1;`
 			const data = await this.db.get(sql)
 			await this.db.run(sql)
@@ -47,9 +46,16 @@ module.exports = class Song {
 			throw err
 		}
 	}
-	async metaData(metadata) {
-		console.log(metadata)
-		return metadata
+	
+	async getData() {
+		try {
+			const sql = 'SELECT * FROM songs;'
+			const data = await this.db.all(sql)
+			await this.db.run(sql)
+			await this.db.close()
+			return data
+		} catch(err) {
+			throw err
+		}
 	}
-
 }

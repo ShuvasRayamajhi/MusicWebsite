@@ -14,14 +14,9 @@ const koaBody = require('koa-body')({multipart: true, uploadDir: '.'})
 const session = require('koa-session')
 const bcrypt = require('bcrypt-promise')
 // const fs = require('fs-extra')
-const mime = require('mime-types')
 const fs = require('fs-extra')
-const lame = require('node-lame')
 const sqlite = require('sqlite-async')
-const saltRounds = 10
-const bitrate = require('bitrate')
-const nodeID3 = require('node-id3')
-const mm = require('musicmetadata')
+
 
 // create a new parser from a node ReadStream
 
@@ -43,7 +38,6 @@ const defaultPort = 8080
 
 const port = process.env.PORT || defaultPort
 const dbName = 'website.db'
-
 app.use(bodyParser({
 	encoding: 'multipart/form-data'
 }))
@@ -59,9 +53,8 @@ const router = new Router()
 router.get('/', async ctx => {
 	try {
 		if(ctx.session.authorised !== true) return ctx.redirect('/login?msg=you need to log in')
-		const sql = 'SELECT * FROM songs;'
-		const db = await sqlite.open(dbName)
-		const data = await db.all(sql)
+		const song = await new Song(dbName)
+		const data = await song.getData()
 		await ctx.render('index', {title: 'Favourite songs', songs: data})
 	} catch(err) {
 		await ctx.render('error', { message: err.message })
@@ -69,14 +62,12 @@ router.get('/', async ctx => {
 })
 router.get('/play/:song_id', async ctx => {
 	try {
-		if(ctx.session.authorised !== true) return ctx.redirect('/login?msg=you need to log in')
-		const id = ctx.params.song_id
 		const song = await new Song(dbName)
+		const id = ctx.params.song_id
 		const data = await song.playSong(id)
 		const newdata = JSON.parse(JSON.stringify(data))
 		ctx.response.type = 'mp3'
 		ctx.response.body = fs.createReadStream(newdata.location)
-		await ctx.render('index')
 	} catch(err) {
 		fs.createReadStream.close
 		ctx.body = err.message
