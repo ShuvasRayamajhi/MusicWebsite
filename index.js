@@ -25,7 +25,6 @@ const sqlite = require('sqlite-async')
 /* IMPORT CUSTOM MODULES */
 const User = require('./modules/user')
 const Song = require('./modules/song')
-const Playlist = require('./modules/playlist')
 
 const app = new Koa()
 /* CONFIGURING THE MIDDLEWARE */
@@ -61,17 +60,7 @@ router.get('/', async ctx => {
         await ctx.render('error', { message: err.message })
     }
 })
-router.get('/playlist', async ctx => {
-    try {
-		if(ctx.session.authorised !== true) return ctx.redirect('/login?msg=you need to log in')
-		const img = await new Playlist(dbName)
-        const data = await img.plData()
-		console.log(data)
-		await ctx.render('playlist',{playlist: data})
-    } catch(err) {
-        ctx.body = err.message
-    }
-})
+
 router.get('/play/:song_id', async ctx => {
     try {
         const song = await new Song(dbName)
@@ -98,7 +87,6 @@ router.get('/upload', async ctx => {
         if(ctx.session.authorised !== true) return ctx.redirect('/login?msg=you need to log in')
         await ctx.render('upload')
     } catch(err) {
-        
         ctx.body = err.message
     }
 })
@@ -116,22 +104,6 @@ router.post('/register', koaBody, async ctx => {
         const user = await new User(dbName)
         await user.register(body.user, body.pass)
         ctx.redirect(`/?msg=new user "${body.name}" added`)
-    } catch(err) {
-        await ctx.render('error', {message: err.message})
-    }
-})
-router.post('/uploadSong', koaBody, async ctx => {
-    try {
-        if(ctx.session.authorised !== true) return ctx.redirect('/login?msg=you need to log in')
-        const body = ctx.request.body
-        const song = await new Song(dbName)
-        const {path, type} = ctx.request.files.song
-        const extension = mime.extension(type)
-        console.log(extension)
-        await song.uploadSong(path, type, body.filename)
-        console.log('uploaded')
-        ctx.redirect(`/?msg=new song uploaded`)
-        await ctx.render('index')
     } catch(err) {
         await ctx.render('error', {message: err.message})
     }

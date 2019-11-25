@@ -5,7 +5,6 @@ const bcrypt = require('bcrypt-promise')
 const mime = require('mime-types')
 const fs = require('fs-extra')
 const sqlite = require('sqlite-async')
-const nodeID3 = require('node-id3')
 const saltRounds = 10
 
 module.exports = class Song {
