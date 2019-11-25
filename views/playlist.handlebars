@@ -1,0 +1,30 @@
+
+<!doctype html>
+
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Upload a song.</title>
+        <meta name="description" content="Upload songs.">
+        <meta name="author" content="rayamajs">
+        <link href="style.css" type="text/css" rel="stylesheet" />
+    </head>
+    <body>
+        <div class="form">
+        <form action="/uploadPhoto" enctype="multipart/form-data" method="post">
+            <p>Playlist Picture<br /><input type="file" id="picUpload" name="pic"></p>
+            <p>Creat Playlist<br /><input type="text" name="plname" placeholder="Enter Playlist Name" value="" autofocus></p>
+			
+            <p><input type="submit" value="upload"></p>
+        </form>
+		{{#each playlist}}	
+			<h1>An Error Has Occurred</h1>
+
+			<img src="{{this.pic}}" alt="image">
+        </div>
+		 {{/each}}
+		
+		
+       
+    </body>
+</html>

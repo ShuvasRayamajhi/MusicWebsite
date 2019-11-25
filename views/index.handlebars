@@ -1,26 +1,27 @@
-
 <!DOCTYPE html>
 <html>
 <head>
-	<title>My Favourite Songs</title>
-	<link href="style.css" type="text/css" rel="stylesheet" />
+    <title>My Favourite Songs</title>
+    <link href="style.css" type="text/css" rel="stylesheet" />
 </head>
 <body>
-	
-	<table style="width: 100%;">
-	<h1>songs</h1>
+    
+    <table style="width: 100%;">
+    <h1>songs</h1>
 
-		{{#each songs}}
-			<li><a href="/play/{{this.song_id}}"> SONG NAME: {{this.title}} </a></li>
-			<li2><a > ARTIST: {{this.artist}} ALBUM: {{this.album}} GENRE: {{this.genre}}</a></li>
+        {{#each songs}}
+            <li><a href="/play/{{this.song_id}}"> SONG NAME: {{this.title}} </a></li>
+            <li2><a > ARTIST: {{this.artist}} ALBUM: {{this.album}} GENRE: {{this.genre}}</a></li>
 			
-		{{/each}}
-		</ol>
-		
-	</table>
-	<p><a href="/logout">logout</a>
-	<p><a href="/upload">upload</a></p>
-	
-	</div>
+        {{/each}}
+        </ol>
+        
+    </table>
+    <p><a href="/upload">upload</a>
+    <p><a href="/logout">logout</a>
+    <p><a href="/playlist">playlist</a>
+    
+    
+    </div>
 </body>
 </html>
