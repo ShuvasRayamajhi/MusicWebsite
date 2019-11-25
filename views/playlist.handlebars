@@ -17,7 +17,14 @@
 			
             <p><input type="submit" value="upload"></p>
         </form>
-            <h1>yo {{this.name}} {{this.pic}}</h1>
+		{{#each playlist}}	
+			<h1>An Error Has Occurred</h1>
+
+			<img src="{{this.pic}}" alt="image">
         </div>
+		 {{/each}}
+		
+		
+       
     </body>
 </html>

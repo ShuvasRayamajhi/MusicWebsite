@@ -150,7 +150,7 @@ router.post('/uploadPhoto', koaBody, async ctx => {
         const {path, type,} = ctx.request.files.pic
         const fileExtension = mime.extension(type)
         await playlist.uploadPicture(path, type, body.plname, fileExtension)
-        // redirect to the home page
+		// redirect to the home page
         await ctx.render('playlist')
     } catch(err) {
         await ctx.render('error', {message: err.message})

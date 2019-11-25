@@ -27,7 +27,7 @@ module.exports = class Playlist {
             console.log(`song title: ${plname}`)
             console.log(`extension: ${extension}`)
             await fs.copy(path, `public/covers/${plname}.${fileExtension}`)
-            const location = `public/covers/${plname}.${fileExtension}`
+            const location = `covers/${plname}.${fileExtension}`
             const sql = `INSERT INTO ${plname} (name, pic) VALUES("${plname}", "${location}")`
             console.log(location)
             await this.db.run(sql)
