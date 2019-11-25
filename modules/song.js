@@ -5,6 +5,7 @@ const bcrypt = require('bcrypt-promise')
 const mime = require('mime-types')
 const fs = require('fs-extra')
 const sqlite = require('sqlite-async')
+const nodeID3 = require('node-id3')
 const saltRounds = 10
 
 module.exports = class Song {
@@ -25,11 +26,19 @@ module.exports = class Song {
 			const location = `public/songs/${filename}.mp3`
 			const read = nodeID3.read(location)
 			JSON.parse(JSON.stringify(read))
+			fs.writeFileSync(filename)
 			const sql = `INSERT INTO songs(title, artist, album, genre, location) VALUES("${read.title}", "${read.artist}", "${read.album}", "${read.genre}", "${location}")`
 			console.log(location)
 			await this.db.run(sql)
 			await this.db.close()
 			return true
+		}catch(err) {
+			throw err
+		}
+	}
+	async readSong(filename ) {
+		try {
+			return fs.readFileSync(filename)
 		}catch(err) {
 			throw err
 		}
@@ -45,7 +54,7 @@ module.exports = class Song {
 			throw err
 		}
 	}
-	
+
 	async getData() {
 		try {
 			const sql = 'SELECT * FROM songs;'

@@ -2,8 +2,8 @@
 'use strict'
 const mock = require('mock-fs')
 const Accounts = require('../modules/user.js')
-const File = require ('../modules/user.js')
-const fs = require ('fs')
+const File = require('../modules/user.js')
+const fs = require('fs')
 
 describe('register()', () => {
 
@@ -43,6 +43,7 @@ describe('register()', () => {
 })
 
 describe('login()', () => {
+
 	test('log in with valid credentials', async done => {
 		expect.assertions(1)
 		const account = await new Accounts()
@@ -67,6 +68,22 @@ describe('login()', () => {
 		await account.register('doej', 'password')
 		await expect( account.login('doej', 'bad') )
 			.rejects.toEqual( Error('invalid password for account "doej"') )
+		done()
+	})
+	test('error if blank username', async done => {
+		expect.assertions(1)
+		const account = await new Accounts()
+		await account.register('doej', 'password')
+		await expect( account.login('', 'password') )
+			.rejects.toEqual( Error('missing username') )
+		done()
+	})
+	test('error if blank password', async done => {
+		expect.assertions(1)
+		const account = await new Accounts()
+		await account.register('doej', 'password')
+		await expect( account.login('doej', '') )
+			.rejects.toEqual( Error('missing password') )
 		done()
 	})
 })
