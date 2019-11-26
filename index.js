@@ -67,7 +67,7 @@ router.get('/play/:song_id', async ctx => {
 		const data = await song.playSong(id)
 		const newdata = JSON.parse(JSON.stringify(data))
 		ctx.response.type = 'mp3'
-		ctx.response.body = fs.createReadStream(newdata.location)
+		ctx.response.body = fs.readFileSync(newdata.location)
 	} catch(err) {
 		fs.createReadStream.close
 		ctx.body = err.message
@@ -114,6 +114,7 @@ router.post('/uploadSong', koaBody, async ctx => {
 		const body = ctx.request.body
 		const song = await new Song(dbName)
 		const {path, type} = ctx.request.files.song
+		console.log(type)
 		await song.uploadSong(path, type, body.filename)
 		console.log('uploaded')
 		ctx.redirect('/?msg=new song uploaded')

@@ -70,7 +70,7 @@ describe('login()', () => {
 			.rejects.toEqual( Error('invalid password for account "doej"') )
 		done()
 	})
-	test('error if blank username', async done => {
+	test('error if empty username', async done => {
 		expect.assertions(1)
 		const account = await new Accounts()
 		await account.register('doej', 'password')
@@ -78,7 +78,7 @@ describe('login()', () => {
 			.rejects.toEqual( Error('missing username') )
 		done()
 	})
-	test('error if blank password', async done => {
+	test('error if empty password', async done => {
 		expect.assertions(1)
 		const account = await new Accounts()
 		await account.register('doej', 'password')
