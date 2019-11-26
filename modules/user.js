@@ -2,8 +2,6 @@
 'use strict'
 
 const bcrypt = require('bcrypt-promise')
-// const fs = require('fs-extra')
-const mime = require('mime-types')
 const fs = require('fs-extra')
 const sqlite = require('sqlite-async')
 const saltRounds = 10
@@ -36,8 +34,11 @@ module.exports = class User {
 		}
 	}
 
+	// eslint-disable-next-line complexity
 	async login(username, password) {
 		try {
+			if(username.length === 0) throw new Error('missing username')
+			if(password.length === 0) throw new Error('missing password')
 			let sql = `SELECT count(id) AS count FROM users WHERE user="${username}";`
 			const records = await this.db.get(sql)
 			if(!records.count) throw new Error(`username "${username}" not found`)
