@@ -1,36 +1,25 @@
-
 <!DOCTYPE html>
 <html>
 <head>
-	<title>My Favourite Songs</title>
-	<link href="style.css" type="text/css" rel="stylesheet" />
+    <title>My Favourite Songs</title>
+    <link href="style.css" type="text/css" rel="stylesheet" />
 </head>
 <body>
-	
-	<table style="width: 100%;">
-	<h1>songs</h1>
-				<form action="/" method="get">
-					<input type="text" name="q" value="{{query}}">
-					<input type="submit" value="Search">
-				</form>
-		<ol>
-		{{#if query}}
-    			<p>{{query}}</p>
-  		{{/if}}
-		{{#each songs}}
-			<li></liclass><a href="/play/{{this.song_id}}">{{this.title}} {{read.title}}</a></li>
-			<li2></liclass><a >{{this.location}} </a></li>
+    
+    <table style="width: 100%;">
+    <h1>songs</h1>
 
-		{{/each}}
-		</ol>
-		
-	</table>
-
-	<p><a href="/play">play</a>
-	<p><a href="/meta">meta</a>
-	<p><a href="/login">logout</a>
-	<p><a href="/upload">upload</a></p>
-	
-	</div>
+        {{#each songs}}
+            <li><a href="/play/{{this.song_id}}"> SONG NAME: {{this.title}} </a></li>
+            <li2><a > ARTIST: {{this.artist}} ALBUM: {{this.album}} GENRE: {{this.genre}}</a></li>
+			
+        {{/each}}
+        </ol>
+        
+    </table>
+    <p><a href="/upload">upload</a>
+    <p><a href="/logout">logout</a>
+        
+    </div>
 </body>
 </html>

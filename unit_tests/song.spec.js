@@ -1,10 +1,10 @@
+
 'use strict'
-
 const mock = require('mock-fs')
-const File = require ('../modules/song.js')
+const Songs = require('../modules/song.js')
+//const File = require('../modules/song.js')
 const fs = require('fs')
-const file = new File()
-
+// const song = await new Songs()
 beforeAll( async() => {
 	mock({
 		'test': {
@@ -16,42 +16,62 @@ beforeAll( async() => {
 afterAll( async() => {
 	mock.restore()
 })
-
 describe('uploadSong()', () => {
-	beforeEach( async() => {})
-	afterEach( async() => {})
+	test('file name can\'t be empty', async done => {
+		expect.assertions(1)
+		try {
+			const song = await new Songs()
+			await song.uploadSong('asd', 'asd', '')
+			done.fail('test failed')
+		}catch(err) {
+			expect(err.message).toBe('file name can not be empty')
+		} finally {
+			done()
+		}
+	})
+	test('path can\'t be empty', async done => {
+		expect.assertions(1)
+		try {
+			const song = await new Songs()
+			await song.uploadSong('', 'asd', 'asd')
+			done.fail('test failed')
+		}catch(err) {
+			expect(err.message).toBe('path can not be empty')
+		} finally {
+			done()
+		}
+	})
+	test('file type can\'t be empty', async done => {
+		expect.assertions(1)
+		try {
+			const song = await new Songs()
+			await song.uploadSong('asd', '', 'asd')
+			done.fail('test failed')
+		}catch(err) {
+			expect(err.message).toBe('file type can not be empty')
+		} finally {
+			done()
+		}
+	})
+})
 
-	test(`filename can't be empty string`, async done => {
+describe('playSong()', () => {
+	test('blank id', async done => {
 		expect.assertions(1)
-		try {
-			await file.uploadSong('', 'asd')
-			done.fail('test failed')
-		} catch(err) {
-			expect(err.message).toBe(`filename can't be empty`)
-		} finally {
-			done()
-		}
+		const song = await new Songs()
+		await expect( song.playSong('') )
+			.rejects.toEqual( Error('missing id') )
+		done()
 	})
-	test(`filename can't be undefined`, async done => {
+})
+
+describe('displaySong()', () => {
+	test('blank data', async done => {
 		expect.assertions(1)
-		try {
-			await file.uploadSong()
-			done.fail('test failed')
-		} catch(err) {
-			expect(err.message).toBe(`filename can't be empty`)
-		} finally {
-			done()
-		}
+		const song = await new Songs()
+		await expect( song.getData() )
+			.rejects.toEqual( Error('missing data') )
+		done()
 	})
-	test(`song can't be empty`, async done => {
-		expect.assertions(1)
-		try {
-			await file.uploadSong('foo.mp3')
-			done.fail('test failed')
-		} catch(err) {
-			expect(err.message).toBe(`song can't be empty`)
-		} finally {
-			done()
-		}
-	})
+
 })
