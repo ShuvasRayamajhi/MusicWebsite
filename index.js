@@ -12,10 +12,9 @@ const staticDir = require('koa-static')
 const bodyParser = require('koa-bodyparser')
 const koaBody = require('koa-body')({multipart: true, uploadDir: '.'})
 const session = require('koa-session')
-const bcrypt = require('bcrypt-promise')
 // const fs = require('fs-extra')
 const fs = require('fs-extra')
-const sqlite = require('sqlite-async')
+
 
 
 // create a new parser from a node ReadStream
@@ -55,7 +54,7 @@ router.get('/', async ctx => {
 		if(ctx.session.authorised !== true) return ctx.redirect('/login?msg=you need to log in')
 		const song = await new Song(dbName)
 		const data = await song.getData()
-		await ctx.render('index', {title: 'Favourite songs', songs: data})
+		await ctx.render('home', {title: 'Favourite songs', songs: data})
 	} catch(err) {
 		await ctx.render('error', { message: err.message })
 	}
@@ -118,7 +117,7 @@ router.post('/uploadSong', koaBody, async ctx => {
 		await song.uploadSong(path, type, body.filename)
 		console.log('uploaded')
 		ctx.redirect('/?msg=new song uploaded')
-		await ctx.render('index')
+		await ctx.render('home')
 	} catch(err) {
 		await ctx.render('error', {message: err.message})
 	}

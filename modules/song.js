@@ -6,7 +6,6 @@ const mime = require('mime-types')
 const fs = require('fs-extra')
 const sqlite = require('sqlite-async')
 const nodeID3 = require('node-id3')
-const saltRounds = 10
 
 module.exports = class Song {
 
@@ -25,7 +24,7 @@ module.exports = class Song {
 		try {
 			if (path === '') throw new Error('path can not be empty')
 			if (type === undefined || type === '') throw new Error('file type can not be empty')
-			if (filename === undefined || filename === '') throw new Error('file name can not be empty')
+			if (filename === undefined) throw new Error('file name can not be empty')
 			await fs.copy(path, `public/songs/${filename}.mp3`)
 			const location = `public/songs/${filename}.mp3`
 			const read = nodeID3.read(location)
@@ -52,7 +51,7 @@ module.exports = class Song {
 			const data = await this.db.get(sql)
 			await this.db.run(sql)
 			await this.db.close()
-			if(data.length === 0) throw new Error('no play song data')
+			if(data === undefined) throw new Error('no play song data')
 			return data
 		} catch(err) {
 			throw err
