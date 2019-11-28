@@ -12,10 +12,9 @@ const staticDir = require('koa-static')
 const bodyParser = require('koa-bodyparser')
 const koaBody = require('koa-body')({multipart: true, uploadDir: '.'})
 const session = require('koa-session')
-const bcrypt = require('bcrypt-promise')
 // const fs = require('fs-extra')
 const fs = require('fs-extra')
-const sqlite = require('sqlite-async')
+
 
 
 // create a new parser from a node ReadStream
@@ -25,7 +24,7 @@ const sqlite = require('sqlite-async')
 /* IMPORT CUSTOM MODULES */
 const User = require('./modules/user')
 const Song = require('./modules/song')
-
+const Playlist = require('./modules/playlist')
 const app = new Koa()
 /* CONFIGURING THE MIDDLEWARE */
 app.keys = ['darkSecret']
@@ -55,7 +54,7 @@ router.get('/', async ctx => {
 		if(ctx.session.authorised !== true) return ctx.redirect('/login?msg=you need to log in')
 		const song = await new Song(dbName)
 		const data = await song.getData()
-		await ctx.render('index', {title: 'Favourite songs', songs: data})
+		await ctx.render('home', {title: 'Favourite songs', songs: data})
 	} catch(err) {
 		await ctx.render('error', { message: err.message })
 	}
@@ -65,11 +64,9 @@ router.get('/play/:song_id', async ctx => {
 		const song = await new Song(dbName)
 		const id = ctx.params.song_id
 		const data = await song.playSong(id)
-		const newdata = JSON.parse(JSON.stringify(data))
 		ctx.response.type = 'mp3'
-		ctx.response.body = fs.readFileSync(newdata.location)
+		ctx.response.body = fs.readFileSync(data.location)
 	} catch(err) {
-		fs.createReadStream.close
 		ctx.body = err.message
 	}
 })
@@ -118,7 +115,7 @@ router.post('/uploadSong', koaBody, async ctx => {
 		await song.uploadSong(path, type, body.filename)
 		console.log('uploaded')
 		ctx.redirect('/?msg=new song uploaded')
-		await ctx.render('index')
+		await ctx.render('home')
 	} catch(err) {
 		await ctx.render('error', {message: err.message})
 	}

@@ -4,74 +4,71 @@ const mock = require('mock-fs')
 const Songs = require('../modules/song.js')
 //const File = require('../modules/song.js')
 const fs = require('fs')
-// const song = await new Songs()
-beforeAll( async() => {
-	mock({
-		'test': {
-			'foobar': 'foobar2\n'
-		}
-	})
-})
 
-afterAll( async() => {
-	mock.restore()
-})
+
 describe('uploadSong()', () => {
-	test('file name can\'t be empty', async done => {
+	test('error if blank path', async done => {
 		expect.assertions(1)
-		try {
-			const song = await new Songs()
-			await song.uploadSong('asd', 'asd', '')
-			done.fail('test failed')
-		}catch(err) {
-			expect(err.message).toBe('file name can not be empty')
-		} finally {
-			done()
-		}
+		const song = await new Songs()
+		await expect( song.uploadSong('', 'asd', 'asd'))
+			.rejects.toEqual( Error('path can not be empty') )
+		done()
 	})
-	test('path can\'t be empty', async done => {
+
+	test('error if blank file type', async done => {
 		expect.assertions(1)
-		try {
-			const song = await new Songs()
-			await song.uploadSong('', 'asd', 'asd')
-			done.fail('test failed')
-		}catch(err) {
-			expect(err.message).toBe('path can not be empty')
-		} finally {
-			done()
-		}
+		const song = await new Songs()
+		await expect( song.uploadSong('asd', '', 'asd'))
+			.rejects.toEqual( Error('file type can not be empty') )
+		done()
 	})
-	test('file type can\'t be empty', async done => {
+	test('error if blank filename', async done => {
 		expect.assertions(1)
-		try {
-			const song = await new Songs()
-			await song.uploadSong('asd', '', 'asd')
-			done.fail('test failed')
-		}catch(err) {
-			expect(err.message).toBe('file type can not be empty')
-		} finally {
-			done()
-		}
+		const song = await new Songs()
+		await expect( song.uploadSong('asd', 'asd', ''))
+			.rejects.toEqual( Error('file name can not be empty') )
+		done()
 	})
+	//need mockfs
+	// test('no play song data', async done => {
+	// 	expect.assertions(1)
+	// 	const song = await new Songs()
+	// 	const result = await song.playSong('abc', 'abc', 'abc')
+	// 	expect(result).toEqual('true')
+	// 	done()
+	// })
 })
 
 describe('playSong()', () => {
 	test('blank id', async done => {
 		expect.assertions(1)
 		const song = await new Songs()
-		await expect( song.playSong('') )
-			.rejects.toEqual( Error('missing id') )
+		await expect( song.playSong('') ).rejects.toEqual( Error('missing id') )
 		done()
 	})
+	//need mockfs
+	// test('no play song data', async done => {
+	// 	expect.assertions(1)
+	// 	const song = await new Songs()
+	// 	const result = await song.playSong('1')
+	// 	expect(result).toEqual('data')
+	// 	done()
+	// })	
 })
 
 describe('displaySong()', () => {
-	test('blank data', async done => {
+	test('no display song data', async done => {
 		expect.assertions(1)
 		const song = await new Songs()
-		await expect( song.getData() )
-			.rejects.toEqual( Error('missing data') )
+		const result = await song.getData()
+		expect(result).toEqual([])
 		done()
 	})
-
+	// test('blank data', async done => {
+	// 	expect.assertions(1)
+	// 	const song = await new Songs()
+	// 	await expect( song.getData() )
+	// 		.rejects.toEqual( Error('missing data') )
+	// 	done()
+	// })
 })
