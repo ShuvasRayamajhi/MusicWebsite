@@ -24,7 +24,7 @@ const fs = require('fs-extra')
 /* IMPORT CUSTOM MODULES */
 const User = require('./modules/user')
 const Song = require('./modules/song')
-
+const Playlist = require('./modules/playlist')
 const app = new Koa()
 /* CONFIGURING THE MIDDLEWARE */
 app.keys = ['darkSecret']
@@ -64,11 +64,9 @@ router.get('/play/:song_id', async ctx => {
 		const song = await new Song(dbName)
 		const id = ctx.params.song_id
 		const data = await song.playSong(id)
-		const newdata = JSON.parse(JSON.stringify(data))
 		ctx.response.type = 'mp3'
-		ctx.response.body = fs.readFileSync(newdata.location)
+		ctx.response.body = fs.readFileSync(data.location)
 	} catch(err) {
-		fs.createReadStream.close
 		ctx.body = err.message
 	}
 })
