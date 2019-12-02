@@ -28,7 +28,6 @@ module.exports = class Song {
 			if (type !== 'audio/mpeg') throw new Error('only mp3 files allowed')
 			await fs.copy(path, `public/songs/${filename}.mp3`)
 			const location = `public/songs/${filename}.mp3`
-			if(location === undefined) throw new Error('location can not be empty')
 			const read = nodeID3.read(location)
 			const sql = `INSERT INTO songs(title, artist, album, genre, location, year) VALUES("${read.title}",
 				"${read.artist}", "${read.album}", "${read.genre}", "${location}", "${read.year}")`
@@ -42,8 +41,8 @@ module.exports = class Song {
 
 	async playSong(id) {
 		try {
-			if(id.length === 0) throw new Error('missing id')
-			//if(id !== parseInt(id, 10)) throw new Error('non integer id')
+			if(id === '') throw new Error('missing id')
+			if(id === 0) throw new Error('id can not be 0')
 			const sql = `SELECT location FROM songs WHERE song_id = ${id} LIMIT 1;`
 			const data = await this.db.get(sql)
 			await this.db.run(sql)

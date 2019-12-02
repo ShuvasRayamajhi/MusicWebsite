@@ -44,14 +44,13 @@ describe('playSong()', () => {
 		await expect( song.playSong('') ).rejects.toEqual( Error('missing id') )
 		done()
 	})
-	// test('non integer id', async done => {
-	// 	expect.assertions(1)
-	// 	const song = await new Songs()
-	// 	await expect( song.playSong('a') ).rejects.toEqual( Error('non integer id') )
-	// 	done()
-	// })
+	test('integer id is 0', async done => {
+		expect.assertions(1)
+		const song = await new Songs()
+		await expect( song.playSong(0) ).rejects.toEqual( Error('id can not be 0') )
+		done()
+	})
 
-	//need mockfs, also need to call upload song function
 	test('no play song data', async done => {
 		expect.assertions(1)
 		const song = await new Songs()
@@ -70,11 +69,4 @@ describe('displaySong()', () => {
 		expect(result).toEqual([])
 		done()
 	})
-	// test('blank data', async done => {
-	// 	expect.assertions(1)
-	// 	const song = await new Songs()
-	// 	await expect( song.getData() )
-	// 		.rejects.toEqual( Error('missing data') )
-	// 	done()
-	// })
 })
