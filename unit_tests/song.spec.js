@@ -5,13 +5,11 @@ const Songs = require('../modules/song.js')
 //const File = require('../modules/song.js')
 const fs = require('fs')
 
-
 describe('uploadSong()', () => {
 	test('error if blank path', async done => {
 		expect.assertions(1)
 		const song = await new Songs()
-		await expect( song.uploadSong('', 'asd', 'asd'))
-			.rejects.toEqual( Error('path can not be empty') )
+		await expect( song.uploadSong('', 'asd', 'asd')).rejects.toEqual( Error('path can not be empty') )
 		done()
 	})
 
@@ -30,11 +28,11 @@ describe('uploadSong()', () => {
 		done()
 	})
 	//need mockfs
-	// test('no play song data', async done => {
+	// test('uploaded song', async done => {
 	// 	expect.assertions(1)
 	// 	const song = await new Songs()
-	// 	const result = await song.playSong('abc', 'abc', 'abc')
-	// 	expect(result).toEqual('true')
+	// 	const result = await song.uploadSong('path', 'abc', 'abc')
+	// 	expect(result).toEqual(true)
 	// 	done()
 	// })
 })
@@ -46,17 +44,24 @@ describe('playSong()', () => {
 		await expect( song.playSong('') ).rejects.toEqual( Error('missing id') )
 		done()
 	})
-	//need mockfs
-	// test('no play song data', async done => {
-	// 	expect.assertions(1)
-	// 	const song = await new Songs()
-	// 	const result = await song.playSong('1')
-	// 	expect(result).toEqual('data')
-	// 	done()
-	// })	
+	test('integer id is 0', async done => {
+		expect.assertions(1)
+		const song = await new Songs()
+		await expect( song.playSong(0) ).rejects.toEqual( Error('id can not be 0') )
+		done()
+	})
+
+	test('no play song data', async done => {
+		expect.assertions(1)
+		const song = await new Songs()
+		const result = await song.playSong(1)
+		expect(result).toEqual(undefined)
+		done()
+	})
 })
 
 describe('displaySong()', () => {
+	//need mockfs
 	test('no display song data', async done => {
 		expect.assertions(1)
 		const song = await new Songs()
@@ -64,11 +69,4 @@ describe('displaySong()', () => {
 		expect(result).toEqual([])
 		done()
 	})
-	// test('blank data', async done => {
-	// 	expect.assertions(1)
-	// 	const song = await new Songs()
-	// 	await expect( song.getData() )
-	// 		.rejects.toEqual( Error('missing data') )
-	// 	done()
-	// })
 })
